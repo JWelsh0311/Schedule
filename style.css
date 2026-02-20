@@ -178,10 +178,10 @@ body {
    EVENTS TABLE (RIGHT PANEL)
    =========================== */
 .events-table {
-    width: 100%;            /* Fill right panel */
-    border-collapse: collapse; /* Removes spacing between cells */
-    table-layout: fixed;    /* Forces consistent column alignment */
-    font-size: 28px;        /* Large for digital signage */
+   width: 100%;
+   border-collapse: collapse;
+   table-layout: fixed; /* Locks column widths */
+   font-size: 32px; /* Good for signage visibility */
 }
 
 /* All cells */
@@ -190,20 +190,29 @@ body {
     vertical-align: middle;
 }
 
-/* Column 1: Event Name (Left aligned, wider) */
+/* Column 1: Event (NEVER WRAPS) */
 .events-table td:nth-child(1) {
+    width: 45%;
     text-align: left;
-    width: 60%;
+    white-space: nowrap;       /* Keeps event on one line */
+    overflow: hidden;
+    text-overflow: ellipsis;   /* Prevents overflow on long names */
 }
 
-/* Column 2: Room (Centered) */
+/* Column 2: Room (WRAPS WITHIN COLUMN) */
 .events-table td:nth-child(2) {
+    width: 35%;
     text-align: center;
-    width: 20%;
+    white-space: normal;       /* Allows wrapping */
+    word-break: break-word;
+    overflow-wrap: anywhere;   /* Forces wrap instead of bleeding */
+    line-height: 1.2;          /* Keeps stacked rooms readable */
 }
 
-/* Column 3: Time (Right aligned like a schedule board) */
+/* Column 3: Time (ALWAYS SAME LINE AS EVENT) */
 .events-table td:nth-child(3) {
-    text-align: right;
     width: 20%;
+    text-align: right;
+    white-space: nowrap;       /* Prevents time from dropping down */
+    font-weight: bold;
 }
