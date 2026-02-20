@@ -111,23 +111,11 @@
         <div class="events-title">Today's Events</div>
 
         <!-- Events Table (Auto-populated from Schedule.csv) -->
-        <table class="events-table">
-
-            <!-- Table Header -->
-            <thead>
-                <tr>
-                    <th>Event</th> <!-- Column 1: Event Name -->
-                    <th>Room</th>  <!-- Column 2: Room -->
-                    <th>Time</th>  <!-- Column 3: Time -->
-                </tr>
-            </thead>
-
-            <!-- Table Body (Filled dynamically by JavaScript) -->
-            <tbody id="events-body">
-                <!-- Rows from Schedule.csv will be inserted here -->
-            </tbody>
-
-        </table>
+       <table class="events-table">
+        <tbody id="events-body">
+        <!-- Events from Google Sheet will load here -->
+        </tbody>
+       </table>
 
     </div> <!-- End right-panel -->
 
@@ -138,74 +126,111 @@
      Clock + CSV Event Loader
 =========================== -->
 <script>
+    // ===========================
+    // CLOCK FUNCTION (24-hour format)
+    // ===========================
 
-    // ===========================
-    // 24-HOUR LIVE CLOCK FUNCTION
-    // Updates every second
-    // ===========================
+    // Define a function that updates the clock display
     function updateClock() {
-        const now = new Date(); // Get current time
-        const hours = String(now.getHours()).padStart(2,'0'); // Format hours
-        const minutes = String(now.getMinutes()).padStart(2,'0'); // Format minutes
-        const seconds = String(now.getSeconds()).padStart(2,'0'); // Format seconds
 
-        // Update clock display text
-        document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        const now = new Date(); 
+        // Gets the current system date and time from the user's computer
+
+        const hours = String(now.getHours()).padStart(2,'0'); 
+        // Extracts the hour (0–23) and forces it to always be 2 digits (e.g., 09 instead of 9)
+
+        const minutes = String(now.getMinutes()).padStart(2,'0'); 
+        // Extracts the minutes (0–59) and formats to 2 digits
+
+        const seconds = String(now.getSeconds()).padStart(2,'0'); 
+        // Extracts the seconds (0–59) and formats to 2 digits
+
+        document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`; 
+        // Finds the HTML element with id="clock" and updates the text to the current time
     }
 
-    updateClock(); // Run immediately on page load
-    setInterval(updateClock, 1000); // Update every 1 second
+    updateClock(); 
+    // Runs the clock function immediately when the page first loads
+
+    setInterval(updateClock, 1000); 
+    // Re-runs the clock function every 1000 milliseconds (1 second) for live time updates
 
 
-    // Load Events from Google Sheet via OpenSheet
-    async function loadEvents() {
-    try {
-        // Your published CSV link
-        const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTG1VRLGVRzEDmy_EWkJWdRC3wmC4MH-tLLnBF8Q1aAJU5BX-AyR9jGZpS9jK1rl1EqVZUtcnVWn7ea/pub?output=csv";
+    // ===========================
+    // LOAD EVENTS FROM GOOGLE SHEET (CSV)
+    // ===========================
 
-        const response = await fetch(sheetURL);
-        const csvText = await response.text();
+    // Define a function that retrieves and displays events from the Google Sheet CSV link
+    function loadEvents() {
 
-        // Parse CSV rows
-        const rows = csvText.trim().split("\n").map(r => r.split(","));
+        fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTG1VRLGVRzEDmy_EWkJWdRC3wmC4MH-tLLnBF8Q1aAJU5BX-AyR9jGZpS9jK1rl1EqVZUtcnVWn7ea/pub?output=csv")
+        // Sends a web request to the published Google Sheet CSV URL
 
-        // Remove header row
-        const [header, ...dataRows] = rows;
+        .then(response => response.text())
+        // Converts the downloaded CSV file into plain text so JavaScript can read it
 
-        const tableBody = document.getElementById("events-body");
-        tableBody.innerHTML = ""; // clear old rows
+        .then(csv => {
+            // Begins processing the CSV text data
 
-        dataRows.forEach(cols => {
-            const row = document.createElement("tr");
+            const rows = csv.trim().split("\n").slice(1); 
+            // Removes extra whitespace, splits the CSV into rows using line breaks,
+            // and skips the first row (header row: Event, Room, Time)
 
-            const eventCell = document.createElement("td");
-            eventCell.textContent = cols[0] || "";
+            const tableBody = document.getElementById("events-body"); 
+            // Gets the table body element where event rows will be inserted dynamically
 
-            const roomCell = document.createElement("td");
-            roomCell.textContent = cols[1] || "";
+            tableBody.innerHTML = ""; 
+            // Clears any existing table rows before adding fresh data (prevents duplicates)
 
-            const timeCell = document.createElement("td");
-            timeCell.textContent = cols[2] || "";
+            rows.forEach(row => {
+                // Loops through each row of CSV data one at a time
 
-            row.appendChild(eventCell);
-            row.appendChild(roomCell);
-            row.appendChild(timeCell);
+                const cols = row.split(","); 
+                // Splits each row into columns using commas
+                // Example: "Event1,A100,900" → [Event1, A100, 900]
 
-            tableBody.appendChild(row);
+                if (cols.length >= 3 && cols[0].trim() !== "") {
+                    // Ensures the row has at least 3 columns AND is not empty
+                    // Prevents blank rows from appearing on the display
+
+                    const tr = document.createElement("tr"); 
+                    // Creates a new HTML table row element (<tr>)
+
+                    tr.innerHTML = `
+                        <td>${cols[0]}</td>
+                        <td>${cols[1]}</td>
+                        <td>${cols[2]}</td>
+                    `;
+                    // Inserts the Event, Room, and Time into three table cells (<td>)
+                    // Column 0 = Event name
+                    // Column 1 = Room
+                    // Column 2 = Time
+
+                    tableBody.appendChild(tr); 
+                    // Adds the newly created row to the table body on the webpage
+                }
+            });
+        })
+
+        .catch(error => {
+            // Runs if the CSV fails to load (network error, bad link, permissions, etc.)
+
+            console.error("Error loading CSV:", error); 
+            // Prints an error message in the browser developer console (F12)
         });
-
-    } catch (error) {
-        console.error("Error loading Google Sheet CSV:", error);
     }
-}
 
-// Load immediately
-loadEvents();
+    // ===========================
+    // AUTO-LOAD + AUTO-REFRESH
+    // ===========================
 
-// Refresh every 60 seconds
-setInterval(loadEvents, 60000);
+    loadEvents(); 
+    // Immediately loads events when the page opens (initial data display)
 
-</script> <!-- End JavaScript -->
+    setInterval(loadEvents, 60000); 
+    // Automatically refreshes the event list every 60 seconds
+    // This keeps the digital sign synced with the live Google Sheet
+</script>
 
 </body> <!-- End body -->
 </html> <!-- End HTML document -->
