@@ -1,0 +1,198 @@
+<!DOCTYPE html> <!-- Declares HTML5 document type -->
+<html lang="en"> <!-- Root HTML element with English language -->
+<head>
+    <meta charset="UTF-8"> <!-- Character encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive scaling -->
+    <title>Facility Digital Sign</title> <!-- Browser tab title -->
+
+    <!-- External CSS stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body> <!-- Page body starts -->
+
+<!-- ===========================
+     MAIN CONTAINER
+     (Splits screen into left and right panels)
+=========================== -->
+<div class="container">
+
+    <!-- ===========================
+         LEFT PANEL
+         Clock + Maps + Points of Contact
+    =========================== -->
+    <div class="left-panel">
+
+        <!-- ===========================
+             TOP CONTENT WRAPPER
+             (Clock + Maps stacked vertically)
+        =========================== -->
+        <div class="top-content">
+
+            <!-- ===========================
+                 CLOCK SECTION
+                 (24-hour live clock display)
+            =========================== -->
+            <div class="clock">
+                <div id="clock">00:00:00</div> <!-- Clock text updated by JavaScript -->
+            </div>
+
+            <!-- ===========================
+                 MAPS / DIRECTORY SECTION
+                 (Building floor maps)
+            =========================== -->
+            <div class="maps-container">
+
+                <!-- Row 1: Two maps side-by-side -->
+                <div class="maps-row">
+                    <img src="map1.jpg" alt="Floor 1 Map"> <!-- First floor map -->
+                    <img src="map2.jpg" alt="Floor 2 Map"> <!-- Second floor map -->
+                </div>
+
+            </div> <!-- End maps-container -->
+
+        </div> <!-- End top-content -->
+
+        <!-- ===========================
+             POINTS OF CONTACT TABLE
+             (Centered under maps)
+        =========================== -->
+        <div class="events-container"> <!-- Reusing container styling for centered table -->
+
+            <!-- Table wrapper (50% width and centered via CSS) -->
+            <div class="table-wrapper">
+
+                <!-- Section title -->
+                <h2 class="section-title">Points of Contact</h2>
+
+                <!-- Points of Contact Table -->
+                <table class="event-table"> <!-- Reusing event-table styling -->
+                    <tbody>
+                        <!-- Row 1: Security -->
+                        <tr>
+                            <td>Building Security</td> <!-- POC Name -->
+                            <td>A100 / Ex. 1234</td> <!-- Room and extension -->
+                        </tr>
+
+                        <!-- Row 2: IT Support -->
+                        <tr>
+                            <td>IT Support</td>
+                            <td>A101 / Ex. 5678</td>
+                        </tr>
+
+                        <!-- Row 3: Network Team -->
+                        <tr>
+                            <td>Network Team</td>
+                            <td>A102 / Ex. 8765</td>
+                        </tr>
+
+                        <!-- Row 4: Front Desk -->
+                        <tr>
+                            <td>Front Desk</td>
+                            <td>Main Lobby / Ex. 4321</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div> <!-- End table-wrapper -->
+
+        </div> <!-- End events-container -->
+
+    </div> <!-- End left-panel -->
+
+    <!-- ===========================
+         RIGHT PANEL
+         LIVE EVENTS FROM EXCEL (CSV)
+         Columns: Event | Room | Time
+    =========================== -->
+    <div class="right-panel">
+
+        <!-- Events Section Title -->
+        <div class="events-title">Today's Events</div>
+
+        <!-- Events Table (Auto-populated from Schedule.csv) -->
+        <table class="events-table">
+
+            <!-- Table Header -->
+            <thead>
+                <tr>
+                    <th>Event</th> <!-- Column 1: Event Name -->
+                    <th>Room</th>  <!-- Column 2: Room -->
+                    <th>Time</th>  <!-- Column 3: Time -->
+                </tr>
+            </thead>
+
+            <!-- Table Body (Filled dynamically by JavaScript) -->
+            <tbody id="events-body">
+                <!-- Rows from Schedule.csv will be inserted here -->
+            </tbody>
+
+        </table>
+
+    </div> <!-- End right-panel -->
+
+</div> <!-- End container -->
+
+<!-- ===========================
+     JAVASCRIPT SECTION
+     Clock + CSV Event Loader
+=========================== -->
+<script>
+
+    // ===========================
+    // 24-HOUR LIVE CLOCK FUNCTION
+    // Updates every second
+    // ===========================
+    function updateClock() {
+        const now = new Date(); // Get current time
+        const hours = String(now.getHours()).padStart(2,'0'); // Format hours
+        const minutes = String(now.getMinutes()).padStart(2,'0'); // Format minutes
+        const seconds = String(now.getSeconds()).padStart(2,'0'); // Format seconds
+
+        // Update clock display text
+        document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    updateClock(); // Run immediately on page load
+    setInterval(updateClock, 1000); // Update every 1 second
+
+
+    // Load Events from Google Sheet via OpenSheet
+    async function loadEvents() {
+        const sheetURL = "https://opensheet.elk.sh/2PACX-1vTG1VRLGVRzEDmy_EWkJWdRC3wmC4MH-tLLnBF8Q1aAJU5BX-AyR9jGZpS9jK1rl1EqVZUtcnVWn7ea/Sheet1";
+        try {
+            const response = await fetch(sheetURL);
+            const data = await response.json();
+            const tableBody = document.getElementById("events-body");
+            tableBody.innerHTML = ""; // clear old rows
+
+            data.forEach(event => {
+                const row = document.createElement("tr");
+
+                const eventCell = document.createElement("td");
+                eventCell.textContent = event.Event || "";
+
+                const roomCell = document.createElement("td");
+                roomCell.textContent = event.Room || "";
+
+                const timeCell = document.createElement("td");
+                timeCell.textContent = event.Time || "";
+
+                row.appendChild(eventCell);
+                row.appendChild(roomCell);
+                row.appendChild(timeCell);
+
+                tableBody.appendChild(row);
+            });
+        } catch (err) {
+            console.error("Error loading events:", err);
+        }
+    }
+
+    loadEvents(); // initial load
+    setInterval(loadEvents, 60000); // refresh every 60 seconds
+
+</script> <!-- End JavaScript -->
+
+</body> <!-- End body -->
+</html> <!-- End HTML document -->

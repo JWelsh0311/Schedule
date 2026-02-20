@@ -1,0 +1,218 @@
+/* ===========================
+   GENERAL BODY STYLING
+   (Applies to the entire page)
+=========================== */
+body {
+    margin: 0; /* Removes default browser margins */
+    font-family: Arial, Helvetica, sans-serif; /* Clean readable font */
+    background-color: #000; /* Black background for signage */
+    color: #fff; /* Default text color is white */
+}
+
+/* ===========================
+   MAIN CONTAINER
+   (Splits screen into left and right panels)
+=========================== */
+.container {
+    display: flex; /* Horizontal layout: left + right */
+    height: 100vh; /* Full screen height */
+    width: 100vw;  /* Full screen width */
+    overflow: hidden; /* Prevents scrollbars on signage display */
+}
+
+/* ===========================
+   LEFT PANEL
+   (Clock + Maps + POC Table)
+=========================== */
+.left-panel {
+    width: 65%; /* Left panel takes 55% of screen */
+    padding: 10px 30px 10px 30px; /* Internal spacing */
+    box-sizing: border-box; /* Includes padding in width */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: space-between; /* Top content top, table bottom */
+    height: 100vh;
+    flex-shrink: 0; /* Prevents panel shrinking */
+
+    /* Background logo with dark overlay for readability */
+    background:
+        linear-gradient(rgba(17,17,17,0.90), rgba(17,17,17,0.90)),
+        url("logo.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/* ===========================
+   TOP CONTENT WRAPPER
+   (Clock + Maps grouped together)
+=========================== */
+.top-content {
+    display: flex;
+    flex-direction: column; /* Vertical stacking */
+    gap: 10px; /* Space between clock and maps */
+}
+
+/* ===========================
+   CLOCK STYLING
+   (Large and visible for signage)
+=========================== */
+.clock {
+    font-size: 5vh; /* Scales with screen height */
+    text-align: center; /* Center the clock */
+    margin: 0;
+    color: #00ffff; /* Cyan digital clock color */
+    font-weight: bold;
+    font-family: 'Courier New', monospace; /* Digital style font */
+}
+
+/* ===========================
+   MAPS / DIRECTORY SECTION
+=========================== */
+.maps-container {
+    margin: 0;
+}
+
+/* Row for maps (side-by-side layout) */
+.maps-row {
+    display: flex;
+    justify-content: center; /* Center maps horizontally */
+    gap: 15px; /* Space between maps */
+    margin-bottom: 10px;
+}
+
+/* Single map row (centered third map) */
+.maps-row.single-map {
+    justify-content: center;
+}
+
+/* Map image styling */
+.maps-row img {
+    width: 48%; /* Two maps per row */
+    height: auto; /* Maintain aspect ratio */
+    border: 5px solid #ddd; /* Light border for visibility */
+    object-fit: cover; /* Fill space cleanly */
+}
+
+/* Third map sizing */
+.maps-row.single-map img {
+    width: 50%;
+}
+
+/* ===========================
+   POINTS OF CONTACT TABLE SECTION
+   (Centered under maps)
+=========================== */
+.events-container {
+    display: flex;
+    justify-content: center; /* Centers the single table */
+    margin-top: auto; /* Pushes table toward bottom */
+}
+
+/* Wrapper to control table width */
+.table-wrapper {
+    width: 60%; /* Centered narrower table for clean look */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center title and table */
+}
+
+/* Section title styling */
+.section-title {
+    font-size: 32px; /* Large signage title */
+    margin: 0 0 10px 0;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Base table styling (used for POC table) */
+.event-table {
+    width: 100%;
+    border-collapse: collapse; /* Removes spacing between cells */
+    font-size: 22px; /* Large readable text for distance viewing */
+}
+
+/* Table cell styling */
+.event-table td {
+    padding: 12px 16px; /* Bigger padding for readability */
+    text-align: left;
+}
+
+/* Alternating row colors (black / light gray) */
+.event-table tbody tr:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.85); /* Dark rows */
+    color: #ffffff;
+}
+
+.event-table tbody tr:nth-child(even) {
+    background-color: #dddddd; /* Light rows */
+    color: #000000;
+}
+
+/* ===========================
+   RIGHT PANEL
+   (Excel Events Display Only)
+=========================== */
+.right-panel {
+    width: 35%; /* Right panel takes 45% of screen */
+    display: flex;
+    flex-direction: column; /* Stack title + table */
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #000; /* Solid black background */
+    padding: 20px;
+    box-sizing: border-box;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* ===========================
+   EVENTS TITLE (RIGHT PANEL)
+=========================== */
+.events-title {
+    font-size: 48px; /* Very large for signage visibility */
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #00ffff; /* Matches clock color theme */
+}
+
+/* ===========================
+   EVENTS TABLE (CSV DISPLAY)
+=========================== */
+.events-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 28px; /* Extra large text for big display screens */
+}
+
+/* Header row styling */
+.events-table thead th {
+    background-color: #00ffff; /* Bright header */
+    color: #000;
+    padding: 14px;
+    text-align: left;
+    font-size: 30px;
+}
+
+/* Body cell styling */
+.events-table td {
+    padding: 16px;
+    text-align: left;
+}
+
+/* Alternating rows for events table (high visibility) */
+.events-table tbody tr:nth-child(odd) {
+    background-color: #111111; /* Dark gray rows */
+    color: #ffffff;
+	max-height: 80vh; /* Keep table within right panel */
+    overflow-y: auto; /* Optional scrollbar if too many rows */
+    display: block;
+}
+
+.events-table tbody tr:nth-child(even) {
+    background-color: #dddddd; /* Light gray rows */
+    color: #000000;
+	display: table;
+    width: 100%;
+    table-layout: fixed;
+}
