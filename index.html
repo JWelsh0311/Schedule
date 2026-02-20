@@ -159,38 +159,51 @@
 
     // Load Events from Google Sheet via OpenSheet
     async function loadEvents() {
-        const sheetURL = "https://opensheet.elk.sh/2PACX-1vTG1VRLGVRzEDmy_EWkJWdRC3wmC4MH-tLLnBF8Q1aAJU5BX-AyR9jGZpS9jK1rl1EqVZUtcnVWn7ea/Sheet1";
-        try {
-            const response = await fetch(sheetURL);
-            const data = await response.json();
-            const tableBody = document.getElementById("events-body");
-            tableBody.innerHTML = ""; // clear old rows
+    try {
+        // Your published CSV link
+        const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTG1VRLGVRzEDmy_EWkJWdRC3wmC4MH-tLLnBF8Q1aAJU5BX-AyR9jGZpS9jK1rl1EqVZUtcnVWn7ea/pub?output=csv";
 
-            data.forEach(event => {
-                const row = document.createElement("tr");
+        const response = await fetch(sheetURL);
+        const csvText = await response.text();
 
-                const eventCell = document.createElement("td");
-                eventCell.textContent = event.Event || "";
+        // Parse CSV rows
+        const rows = csvText.trim().split("\n").map(r => r.split(","));
 
-                const roomCell = document.createElement("td");
-                roomCell.textContent = event.Room || "";
+        // Remove header row
+        const [header, ...dataRows] = rows;
 
-                const timeCell = document.createElement("td");
-                timeCell.textContent = event.Time || "";
+        const tableBody = document.getElementById("events-body");
+        tableBody.innerHTML = ""; // clear old rows
 
-                row.appendChild(eventCell);
-                row.appendChild(roomCell);
-                row.appendChild(timeCell);
+        dataRows.forEach(cols => {
+            const row = document.createElement("tr");
 
-                tableBody.appendChild(row);
-            });
-        } catch (err) {
-            console.error("Error loading events:", err);
-        }
+            const eventCell = document.createElement("td");
+            eventCell.textContent = cols[0] || "";
+
+            const roomCell = document.createElement("td");
+            roomCell.textContent = cols[1] || "";
+
+            const timeCell = document.createElement("td");
+            timeCell.textContent = cols[2] || "";
+
+            row.appendChild(eventCell);
+            row.appendChild(roomCell);
+            row.appendChild(timeCell);
+
+            tableBody.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error loading Google Sheet CSV:", error);
     }
+}
 
-    loadEvents(); // initial load
-    setInterval(loadEvents, 60000); // refresh every 60 seconds
+// Load immediately
+loadEvents();
+
+// Refresh every 60 seconds
+setInterval(loadEvents, 60000);
 
 </script> <!-- End JavaScript -->
 
