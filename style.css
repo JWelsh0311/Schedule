@@ -157,7 +157,7 @@ body {
     width: 35%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: stretch; /* FIX: keeps table full width and aligned */
     background-color: #000;
     padding: 20px;
@@ -175,43 +175,35 @@ body {
 }
 
 /* ===========================
-   EVENTS TABLE (CSV DISPLAY)
-=========================== */
+   EVENTS TABLE (RIGHT PANEL)
+   =========================== */
 .events-table {
-   width: 100%;
-   border-collapse: collapse;
-   font-size: 28px;
-   table-layout: fixed; /* CRITICAL for header/body alignment */
+    width: 100%;            /* Fill right panel */
+    border-collapse: collapse; /* Removes spacing between cells */
+    table-layout: fixed;    /* Forces consistent column alignment */
+    font-size: 28px;        /* Large for digital signage */
 }
 
-/* Header row styling */
-.events-table thead th {
-    background-color: #00ffff; /* Bright header */
-    color: #000;
-    padding: 14px;
-    text-align: left;
-    font-size: 30px;
-}
-
-/* Body cell styling */
+/* All cells */
 .events-table td {
-    padding: 16px;
+    padding: 10px 20px;
+    vertical-align: middle;
+}
+
+/* Column 1: Event Name (Left aligned, wider) */
+.events-table td:nth-child(1) {
     text-align: left;
+    width: 60%;
 }
 
-/* Alternating rows for events table (high visibility) */
-.events-table tbody tr:nth-child(odd) {
-    background-color: #111111; /* Dark gray rows */
-    color: #ffffff;
-	max-height: 80vh; /* Keep table within right panel */
-    overflow-y: auto; /* Optional scrollbar if too many rows */
-    display: block;
+/* Column 2: Room (Centered) */
+.events-table td:nth-child(2) {
+    text-align: center;
+    width: 20%;
 }
 
-.events-table tbody tr:nth-child(even) {
-    background-color: #dddddd; /* Light gray rows */
-    color: #000000;
-	display: table;
-    width: 100%;
-    table-layout: fixed;
+/* Column 3: Time (Right aligned like a schedule board) */
+.events-table td:nth-child(3) {
+    text-align: right;
+    width: 20%;
 }
