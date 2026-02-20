@@ -154,15 +154,13 @@ body {
    (Excel Events Display Only)
 =========================== */
 .right-panel {
-    width: 35%; /* Right panel takes 45% of screen */
+    width: 35%;
     display: flex;
-    flex-direction: column; /* Stack title + table */
+    flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    background-color: #000; /* Solid black background */
+    align-items: stretch; /* FIX: keeps table full width and aligned */
+    background-color: #000;
     padding: 20px;
-    box-sizing: border-box;
-    flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* ===========================
@@ -180,9 +178,10 @@ body {
    EVENTS TABLE (CSV DISPLAY)
 =========================== */
 .events-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 28px; /* Extra large text for big display screens */
+   width: 100%;
+   border-collapse: collapse;
+   font-size: 28px;
+   table-layout: fixed; /* CRITICAL for header/body alignment */
 }
 
 /* Header row styling */
